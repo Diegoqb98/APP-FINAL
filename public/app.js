@@ -108,6 +108,7 @@ function renderAuthOnly() {
   setVisible(authPanel, true);
   setVisible(appPanel, false);
   setVisible(adminPanel, false);
+  updateNavForRole();
 }
 
 function renderAuthenticated() {
@@ -115,6 +116,15 @@ function renderAuthenticated() {
   setVisible(appPanel, true);
   setVisible(adminPanel, state.user?.role === 'admin');
   welcomeText.textContent = `Sesión iniciada como ${state.user.name} (${state.user.role})`;
+  updateNavForRole();
+}
+
+function updateNavForRole() {
+  // Admins: no "Reservar" ni "Mis reservas"; Regular users: no "Administración"
+  const isAdmin = state.user?.role === 'admin';
+  if (navBook) navBook.style.display = isAdmin ? 'none' : '';
+  if (navReservations) navReservations.style.display = isAdmin ? 'none' : '';
+  if (navAdmin) navAdmin.style.display = isAdmin ? '' : 'none';
 }
 
 function cardTemplate(title, meta, notes = '') {
@@ -754,6 +764,12 @@ function handleRoute() {
   const hash = location.hash || '#/';
   // admin routes handled separately
   const isAdminRoute = hash.startsWith('#/admin');
+  // Prevent admins from accessing client-only pages
+  const isAdminUser = state.user?.role === 'admin';
+  if (isAdminUser && (hash.startsWith('#/book') || hash.startsWith('#/reservations'))) {
+    location.hash = '#/admin/rooms';
+    return;
+  }
   // show admin panel only on admin routes and when user is admin
   setVisible(adminPanel, isAdminRoute && state.user?.role === 'admin');
   if (isAdminRoute) {
