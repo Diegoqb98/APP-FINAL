@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Reservas Hoteleras</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Aplicación Web DAW</p>
+      <h1>Gestión de Reservas Hoteleras</h1>
+      <p class="hero__text">Consulta disponibilidad en tiempo real, administra reservas y controla el hotel desde un único panel.</p>
+    </div>
+    <div class="hero__card">
+      <div class="stat">
+        <span>Usuarios</span>
+        <strong id="stat-users">-</strong>
+      </div>
+      <div class="stat">
+        <span>Habitaciones</span>
+        <strong id="stat-rooms">-</strong>
+      </div>
+      <div class="stat">
+        <span>Reservas</span>
+        <strong id="stat-reservations">-</strong>
+      </div>
+    </div>
+  </header>
+
+  <nav class="main-nav" style="max-width:1400px;margin:0 auto;padding:0 2rem;display:flex;gap:1rem;align-items:center;">
+    <a href="#/" id="nav-home">Inicio</a>
+    <a href="#/availability" id="nav-availability">Disponibilidad</a>
+    <a href="#/book" id="nav-book">Reservar</a>
+    <a href="#/reservations" id="nav-reservations">Mis reservas</a>
+    <a href="#/admin/rooms" id="nav-admin">Administración</a>
+  </nav>
+
+  <main class="layout">
+    <section class="panel auth-panel" id="auth-panel">
+      <div class="panel__header">
+        <h2>Acceso</h2>
+        <p>Inicia sesión o crea una cuenta de cliente.</p>
+      </div>
+
+      <div class="grid-2">
+        <form id="login-form" class="card form-card">
+          <h3>Iniciar sesión</h3>
+          <label>Email
+            <input type="email" name="email" placeholder="cliente@correo.com" required />
+          </label>
+          <label>Contraseña
+            <input type="password" name="password" placeholder="********" required />
+          </label>
+          <button type="submit">Entrar</button>
+          <p class="form-message" id="login-message"></p>
+        </form>
+
+        <form id="register-form" class="card form-card">
+          <h3>Registro de cliente</h3>
+          <label>Nombre
+            <input type="text" name="name" placeholder="Diego Quiroga" required />
+          </label>
+          <label>Email
+            <input type="email" name="email" placeholder="cliente@correo.com" required />
+          </label>
+          <label>Contraseña
+            <input type="password" name="password" minlength="8" placeholder="Mínimo 8 caracteres" required />
+          </label>
+          <button type="submit">Crear cuenta</button>
+          <p class="form-message" id="register-message"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="panel hidden" id="app-panel">
+      <div class="panel__header panel__header--space">
+        <div>
+          <h2>Panel principal</h2>
+          <p id="welcome-text">Bienvenido.</p>
+        </div>
+        <div class="actions">
+          <button id="refresh-button" class="secondary">Actualizar</button>
+          <button id="logout-button" class="danger">Cerrar sesión</button>
+        </div>
+      </div>
+
+      <!-- Pages for main app: availability, booking, reservations -->
+      <div id="home-page">
+        <div style="max-width:1400px;margin:0 auto;padding:0 2rem;">
+          <h2>Panel principal</h2>
+          <p>Usa el menú para navegar a Disponibilidad, Reservar o ver tus Reservas.</p>
+        </div>
+      </div>
+
+      <div id="availability-page" style="display:none;">
+        <div class="grid-2">
+          <article class="card">
+            <h3>Consultar disponibilidad</h3>
+            <form id="availability-form" class="inline-form">
+              <label>Entrada
+                <input type="date" name="checkIn" required />
+              </label>
+              <label>Salida
+                <input type="date" name="checkOut" required />
+              </label>
+              <button type="submit">Buscar</button>
+            </form>
+            <div id="availability-results" class="list"></div>
+          </article>
+        </div>
+      </div>
+
+      <div id="book-page" style="display:none;">
+        <div class="grid-2">
+          <article class="card">
+            <h3>Nueva reserva</h3>
+            <form id="reservation-form" class="stack-form">
+              <label>Hotel
+                <select id="hotel-select" required>
+                  <option value="">Selecciona un hotel...</option>
+                </select>
+              </label>
+              <label>Habitación
+                <select name="roomId" id="room-select" required></select>
+              </label>
+              <label>Nombre del huésped
+                <input type="text" name="guestName" placeholder="Juan" required />
+              </label>
+              <label>Apellido del huésped
+                <input type="text" name="guestLastname" placeholder="García" required />
+              </label>
+              <label>Entrada
+                <input type="date" name="checkInDate" required />
+              </label>
+              <label>Salida
+                <input type="date" name="checkOutDate" required />
+              </label>
+              <label>Huéspedes
+                <input type="number" name="guests" min="1" value="1" required />
+              </label>
+              <label>Observaciones
+                <textarea name="notes" rows="3" placeholder="Necesidades especiales, hora de llegada..."></textarea>
+              </label>
+              <button type="submit">Reservar</button>
+            </form>
+            <p class="form-message" id="reservation-message"></p>
+          </article>
+        </div>
+      </div>
+
+      <div id="reservations-page" style="display:none;">
+        <article class="card">
+          <div class="card__head">
+            <h3>Mis reservas</h3>
+            <span class="badge" id="reservation-count">0</span>
+          </div>
+          <div id="my-reservations" class="list"></div>
+        </article>
+      </div>
+
+      <article class="card hidden" id="admin-panel">
+        <div class="card__head">
+          <h3>Administración</h3>
+          <span class="badge">Admin</span>
+        </div>
+
+        <div class="grid-3">
+          <!-- placeholder grid for admin pages; content moved into admin pages -->
+        </div>
+        <!-- Admin layout: sidebar + content -->
+        <div class="admin-layout" style="grid-column: 1 / -1; margin-top:1rem; display:grid; grid-template-columns: 220px 1fr; gap:1rem;">
+          <nav class="admin-sidebar" aria-label="Administración">
+            <ul>
+              <li><a href="#/admin/rooms" id="nav-admin-rooms">Habitaciones</a></li>
+              <li><a href="#/admin/reservations" id="nav-admin-reservations">Reservas activas</a></li>
+              <li><a href="#/admin/users" id="nav-admin-users">Usuarios</a></li>
+            </ul>
+          </nav>
+          <div class="admin-content">
+            <!-- content placeholders (rooms/users/reservations/detail) -->
+            <div id="admin-rooms-page">
+              <h4>Habitaciones</h4>
+              <form id="room-form" class="stack-form compact-form">
+                <input type="hidden" name="id" />
+                <label>Número
+                  <input type="text" name="number" required />
+                </label>
+                <label>Hotel
+                  <select name="hotelId" id="admin-hotel-select" required>
+                    <option value="">Selecciona un hotel...</option>
+                  </select>
+                </label>
+                <label>Tipo
+                  <input type="text" name="type" required />
+                </label>
+                <label>Capacidad
+                  <input type="number" name="capacity" min="1" required />
+                </label>
+                <label>Precio por noche
+                  <input type="number" name="pricePerNight" min="0" step="0.01" required />
+                </label>
+                <label>Descripción
+                  <textarea name="description" rows="3"></textarea>
+                </label>
+                <label class="checkbox">
+                  <input type="checkbox" name="isActive" checked />
+                  Activa
+                </label>
+                <button type="submit">Guardar habitación</button>
+              </form>
+              <div id="rooms-admin-list" class="list"></div>
+            </div>
+            <div id="admin-reservations-page" style="display:none;">
+              <h4>Reservas (Vista administrativa)</h4>
+              <div id="admin-reservations-list-full" class="list"></div>
+            </div>
+            <div id="admin-users-page" style="display:none;">
+              <h4>Usuarios</h4>
+              <div id="users-admin-list" class="list"></div>
+            </div>
+            <div id="admin-reservation-detail" style="display:none; margin-top:1rem;">
+              <div class="card" id="admin-reservation-detail-card"></div>
+              <div style="margin-top:0.5rem;"><button id="admin-back-to-list" class="secondary">Volver a reservas</button></div>
+            </div>
+          </div>
+        </div>
+        </div>
+        
+        <!-- (moved into admin-layout) -->
+      </article>
+    </section>
+  </main>
+
+  <template id="reservation-template">
+    <article class="list-item">
+      <div>
+        <strong class="title"></strong>
+        <p class="meta"></p>
+        <p class="notes"></p>
+      </div>
+      <div class="item-actions"></div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
